@@ -17,17 +17,14 @@ attr_reader :github_username, :github_repo
 
   def fetch
     #auth = {}
-    url = URI("https://github.com/#{github_username}/#{github_repo}/issues")
+    url = URI("https://api.github.com/repos/#{github_username}/#{github_repo}/issues")
     #auth = curl -u paige4521 https://api.github.com
     http = Net::HTTP.new(url.host, url.port)
-
     http.use_ssl = true
-
-    req = Net::HTTP::Get.new(url)
-    #req["Authorization"] = "token #{ENV["GITHUB_TOKEN"]}"
-    response = http.request(req)
+    headers = {"Authentication" =>  ENV["GITHUB_TOKEN"]}
+    request = Net::HTTP::Get.new(url, headers)
+    response = http.request(request)
     body = response.read_body
-
     JSON.parse(body)
   end
 end
